@@ -16,7 +16,11 @@ class FakeIMessageApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FakeChatScreen(),
+      home:
+      FakeChatScreen(
+        parentName: "Mom",
+        parentPhoto: "assets/defaultProfilePic.jpg",
+      ),
     );
   }
 }
