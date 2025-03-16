@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MessageWidget extends StatelessWidget {
@@ -18,47 +19,68 @@ class MessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        decoration: BoxDecoration(
-          color: bubbleColor ?? (isUser ? Colors.blue : Colors.grey[300]),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(18),
-            topRight: const Radius.circular(18),
-            bottomLeft: isUser || !isLastMessage
-                ? const Radius.circular(18)
-                : const Radius.circular(4),
-            bottomRight: !isUser || !isLastMessage
-                ? const Radius.circular(18)
-                : const Radius.circular(4),
+    return CupertinoTheme(
+      data: CupertinoThemeData(
+        brightness: CupertinoTheme.of(context).brightness,
+        textTheme: CupertinoTextThemeData(
+          textStyle: TextStyle(
+            fontFamily: '.SF UI Text', // Cupertino/iMessage-like font
+            fontSize: 16,
+            color: isUser ? CupertinoColors.white : CupertinoColors.label,
           ),
         ),
-        child: Stack(
-          children: [
-            Text(
-              text,
-              style: TextStyle(
-                color: textColor ?? (isUser ? Colors.white : Colors.black),
-                fontSize: 16,
-              ),
+      ),
+      child: Align(
+        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          decoration: BoxDecoration(
+            color: bubbleColor ??
+                (isUser
+                    ? CupertinoColors.systemBlue
+                    : CupertinoColors.systemGrey6),
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(18),
+              topRight: const Radius.circular(18),
+              bottomLeft: isUser || !isLastMessage
+                  ? const Radius.circular(18)
+                  : const Radius.circular(4),
+              bottomRight: !isUser || !isLastMessage
+                  ? const Radius.circular(18)
+                  : const Radius.circular(4),
             ),
-            if (isLastMessage)
-              Positioned(
-                bottom: 0,
-                right: isUser ? -10 : null,
-                left: isUser ? null : -10,
-                child: CustomPaint(
-                  size: const Size(12, 12),
-                  painter: _MessageTailPainter(
-                    color: bubbleColor ?? (isUser ? Colors.blue : Colors.grey[300]!),
-                    isUser: isUser,
-                  ),
+          ),
+          child: Stack(
+            children: [
+              Text(
+                text,
+                style: TextStyle(
+                  color: textColor ??
+                      (isUser
+                          ? CupertinoColors.white
+                          : CupertinoColors.label),
+                  fontSize: 16,
                 ),
               ),
-          ],
+              if (isLastMessage)
+                Positioned(
+                  bottom: 0,
+                  right: isUser ? -10 : null,
+                  left: isUser ? null : -10,
+                  child: CustomPaint(
+                    size: const Size(12, 12),
+                    painter: _MessageTailPainter(
+                      color: bubbleColor ??
+                          (isUser
+                              ? CupertinoColors.systemBlue
+                              : CupertinoColors.systemGrey6),
+                      isUser: isUser,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

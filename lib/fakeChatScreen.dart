@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
@@ -89,21 +90,33 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
             isDarkMode: isDarkMode, // Pass the current theme mode
           ),
           // Add the profile picture and "Mom" text here
-          Container(
-            color: backgroundColor,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(widget.parentPhoto),
-                  radius: 15,
+          CupertinoTheme(
+            data: CupertinoThemeData(
+              brightness: isDarkMode ? Brightness.dark : Brightness.light,
+              textTheme: CupertinoTextThemeData(
+                textStyle: TextStyle(
+                  fontFamily: '.SF UI Text', // Cupertino/iMessage-like font
+                  fontSize: 16,
+                  color: isDarkMode ? Colors.white : Colors.black,
                 ),
-                const SizedBox(width: 10),
-                Text(
-                  widget.parentName,
-                  style: TextStyle(color: textColor, fontSize: 18),
-                ),
-              ],
+              ),
+            ),
+            child: Container(
+              color: backgroundColor,
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: AssetImage(widget.parentPhoto),
+                    radius: 15,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    widget.parentName,
+                    style: TextStyle(color: textColor, fontSize: 18),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
