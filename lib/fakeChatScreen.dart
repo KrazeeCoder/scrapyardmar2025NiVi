@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'message_widget.dart'; // Import the new file
 
 class FakeChatScreen extends StatefulWidget {
   const FakeChatScreen({super.key});
@@ -60,18 +61,9 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                   itemBuilder: (context, index) {
                     final msg = messages[messages.length - index - 1];
                     final isUser = msg["sender"] == "user";
-                    return Align(
-                      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: isUser ? Colors.blue : Colors.grey[800],
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: Text(msg["text"]!,
-                            style: const TextStyle(color: Colors.white, fontSize: 16)),
-                      ),
+                    return MessageWidget(
+                      text: msg["text"]!,
+                      isUser: isUser,
                     );
                   },
                 ),
