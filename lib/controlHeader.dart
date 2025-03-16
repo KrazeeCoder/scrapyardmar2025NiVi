@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
 class ControlHeader extends StatelessWidget {
   final VoidCallback onScreenshotPressed;
   final VoidCallback onThemePressed;
   final VoidCallback onSwitchPressed;
+  final VoidCallback onAIPressed; // Add this callback
   final bool isDarkMode;
 
   const ControlHeader({
@@ -11,6 +11,7 @@ class ControlHeader extends StatelessWidget {
     required this.onScreenshotPressed,
     required this.onThemePressed,
     required this.onSwitchPressed,
+    required this.onAIPressed, // Add this parameter
     required this.isDarkMode,
   });
 
@@ -28,11 +29,10 @@ class ControlHeader extends StatelessWidget {
             icon: const Icon(Icons.switch_left, color: Colors.blue),
             onPressed: onSwitchPressed,
           ),
+          // AI button
           IconButton(
             icon: const Icon(Icons.auto_awesome, color: Colors.blue),
-            onPressed: () {
-              // Placeholder for AI functionality
-            },
+            onPressed: onAIPressed, // Use the callback here
           ),
           // Light/dark mode toggle
           IconButton(

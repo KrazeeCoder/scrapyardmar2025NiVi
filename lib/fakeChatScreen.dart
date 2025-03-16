@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'ai_utility.dart';
 import 'messageWidget.dart';
 import 'controlHeader.dart'; // Import the ControlHeader
 import 'inputField.dart'; // Import the InputField
-
 class FakeChatScreen extends StatefulWidget {
   final String parentName;
   final String parentPhoto;
@@ -104,11 +104,43 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
     }
   }
 
+  // Function to handle AI button press
+  Future<void> handleAIPressed() async {
+    // Get the last user message (if any)
+    print(messages);
+    String lastUserMessage = messages.lastWhere(
+          (msg) => msg["sender"] == "user",
+      orElse: () => {"text": ""},
+    )["text"];
+    print(lastUserMessage);
+
+    // Generate an AI response
+    String? aiResponse = await generateAnswerResponse(
+      lastUserMessage,
+      "Nihanth",
+      context,
+    );
+
+    if (aiResponse != null) {
+      // Add the AI response to the conversation
+      sendMessage(aiResponse.trim(), false);
+    } else {
+      // Show an error message if the AI response is null
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to generate AI response."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Define light and dark mode colors
     final backgroundColor = isDarkMode ? Colors.black : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black;
+    final headerColor = isDarkMode ? Color(0xCC1C1C1C) : Color(0xCCDFDFDF);
     final chatBubbleColorUser = isDarkMode ? Colors.blue : Colors.blue[400];
     final chatBubbleColorParent = isDarkMode ? Colors.grey[800] : Colors.grey[300];
 
@@ -121,6 +153,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
             onScreenshotPressed: takeScreenshot,
             onThemePressed: toggleTheme, // Pass the theme toggle function
             onSwitchPressed: toggleSwitchedMode, // Pass the switch mode function
+            onAIPressed: handleAIPressed, // Pass the AI button handler
             isDarkMode: isDarkMode, // Pass the current theme mode
           ),
           // Constrain the content below the ControlHeader to iPhone aspect ratio
@@ -133,7 +166,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                   children: [
                     // Header with back button, profile picture, and FaceTime button
                     Container(
-                      color: Color(0xCC1C1C1C),
+                      color: headerColor,
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                       child: Row(
                         children: [

@@ -19,12 +19,13 @@ final model = GenerativeModel(
 
 
 Future<String?> generateAnswerResponse(String request, String name, BuildContext context) async {
+  print(request);
   try {
     // Define the prompt
     String prompt = '''
-      Based on what the user's (who is a high school student) request for what to do, generate a text message response from their parent giving them permission to do their request. This is supposed to be a fake text message of approval from the parent to mimic a real one. Make it sound like a text message. Give me ONLY the messages that are ready to go, nothing else. It shouldn't be a question, it should just be a message of approval. Use an emoji.
-      Here is the user's request: can i go to my friend's house?
-      Feel free to incorporate the user's name, Nihanth, to make it more personal. 
+      Based on what the user's (who is a high school student) request for what to do, generate a text message response from their parent giving them permission to do their request. This is supposed to be a fake text message of approval from the parent to mimic a real one. Make it sound like a text message. Give me ONLY ONE message that is ready to go, nothing else. It shouldn't be a question, it should just be a message of approval. Use an emoji sometimes (randomly). Vary the structure of the messages so they don't sound the same everytime.
+      Here is the user's request: $request
+      Feel free to incorporate the user's name, $name, to make it more personal. 
     ''';
     // Generate content
     final content = [Content.text(prompt)];
