@@ -32,7 +32,68 @@ class InputField extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         color: isDarkMode ? CupertinoColors.systemBackground.darkColor : CupertinoColors.systemBackground,
         child: Row(
-          children: [
+          children: isSwitched
+              ? [
+            // Send button on the left
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: onSendPressed,
+              child: CircleAvatar(
+                backgroundImage: AssetImage('assets/sentMessage.png'),
+                radius: 15,
+              ),
+            ),
+            const SizedBox(width: 10),
+            // Expanded text field
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDarkMode ? CupertinoColors.systemGrey6.darkColor : CupertinoColors.systemGrey6,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: CupertinoTextField(
+                        controller: controller,
+                        style: TextStyle(
+                          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                          fontSize: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide.none,
+                            bottom: BorderSide.none,
+                            right: BorderSide.none,
+                            left: BorderSide.none,
+                          ),
+                        ),
+                        placeholder: "iMessage",
+                        placeholderStyle: TextStyle(
+                          color: CupertinoColors.systemGrey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Plus icon on the right
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                // Add functionality for the plus icon (e.g., show attachment options)
+              },
+              child: Icon(
+                CupertinoIcons.add_circled,
+                color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey2,
+                size: 40,
+              ),
+            ),
+          ]
+              : [
             // Plus icon on the left
             CupertinoButton(
               padding: EdgeInsets.zero,
@@ -64,7 +125,12 @@ class InputField extends StatelessWidget {
                           fontSize: 16,
                         ),
                         decoration: BoxDecoration(
-                          border: Border(top: BorderSide.none, bottom: BorderSide.none, right: BorderSide.none, left: BorderSide.none, ),
+                          border: Border(
+                            top: BorderSide.none,
+                            bottom: BorderSide.none,
+                            right: BorderSide.none,
+                            left: BorderSide.none,
+                          ),
                         ),
                         placeholder: "iMessage",
                         placeholderStyle: TextStyle(

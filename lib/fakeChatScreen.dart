@@ -26,7 +26,7 @@ class FakeChatScreen extends StatefulWidget {
 class _FakeChatScreenState extends State<FakeChatScreen> {
   final ScreenshotController screenshotController = ScreenshotController();
   final TextEditingController textController = TextEditingController();
-  List<Map<String, dynamic>> messages = []; // Add a field to track switched mode
+  List<Map<String, dynamic>> messages = [];
 
   // Track whether the app is in dark mode
   bool isDarkMode = true;
@@ -89,75 +89,103 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
             onSwitchPressed: toggleSwitchedMode, // Pass the switch mode function
             isDarkMode: isDarkMode, // Pass the current theme mode
           ),
-          // Add the profile picture and "Mom" text here
-          CupertinoTheme(
-            data: CupertinoThemeData(
-              brightness: isDarkMode ? Brightness.dark : Brightness.light,
-              textTheme: CupertinoTextThemeData(
-                textStyle: TextStyle(
-                  fontFamily: '.SF UI Text', // Cupertino/iMessage-like font
-                  fontSize: 16,
-                  color: isDarkMode ? Colors.white : Colors.black,
-                ),
-              ),
-            ),
-            child: Container(
-              color: backgroundColor,
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: AssetImage(widget.parentPhoto),
-                    radius: 15,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    widget.parentName,
-                    style: TextStyle(color: textColor, fontSize: 18),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Constrain the content below the ControlHeader to iPhone aspect ratio
           Expanded(
-            child: Screenshot(
-              controller: screenshotController,
+            child: AspectRatio(
+              aspectRatio: 10.5 / 19.5, // iPhone aspect ratio (10.5:19.5)
               child: Container(
                 color: backgroundColor,
-                padding: const EdgeInsets.all(10),
-                child: ListView.builder(
-                  reverse: true,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final msg = messages[messages.length - index - 1];
-                    final isUser = msg["sender"] == "user";
-                    final isSwitchedMessage = msg["isSwitched"];
+                child: Column(
+                  children: [
+                    // Header with back button, profile picture, and FaceTime button
+                    Container(
+                      color: backgroundColor,
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      child: Row(
+                        children: [
+                          // Back button
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back, color: Colors.blue),
+                            onPressed: () {
+                              // Handle back button press
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const Spacer(), // Add space between back button and profile picture
+                          // Profile picture and "Mom" text
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: AssetImage(widget.parentPhoto),
+                                radius: 15,
+                              ),
+                              const SizedBox(height: 4), // Add some spacing
+                              Text(
+                                "Mom", // Smaller text below the profile picture
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 14, // Smaller font size
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(), // Add space between profile picture and FaceTime button
+                          // FaceTime button
+                          IconButton(
+                            icon: const Icon(Icons.videocam, color: Colors.blue), // FaceTime icon
+                            onPressed: () {
+                              // Handle FaceTime button press
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Chat messages and input field
+                    Expanded(
+                      child: Screenshot(
+                        controller: screenshotController,
+                        child: Container(
+                          color: backgroundColor,
+                          padding: const EdgeInsets.all(10),
+                          child: ListView.builder(
+                            reverse: true,
+                            itemCount: messages.length,
+                            itemBuilder: (context, index) {
+                              final msg = messages[messages.length - index - 1];
+                              final isUser = msg["sender"] == "user";
+                              final isSwitchedMessage = msg["isSwitched"];
 
-                    return MessageWidget(
-                      text: msg["text"],
-                      isUser: isSwitchedMessage ? !isUser : isUser, // Flip alignment if in switched mode
-                      bubbleColor: isSwitchedMessage
-                          ? chatBubbleColorParent
-                          : isUser
-                          ? chatBubbleColorUser
-                          : chatBubbleColorParent,
-                      textColor: textColor,
-                    );
-                  },
+                              return MessageWidget(
+                                text: msg["text"],
+                                isUser: isSwitchedMessage ? !isUser : isUser, // Flip alignment if in switched mode
+                                bubbleColor: isSwitchedMessage
+                                    ? chatBubbleColorParent
+                                    : isUser
+                                    ? chatBubbleColorUser
+                                    : chatBubbleColorParent,
+                                textColor: textColor,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Use the InputField widget
+                    InputField(
+                      controller: textController,
+                      onSendPressed: () {
+                        if (textController.text.isNotEmpty) {
+                          sendMessage(textController.text, true);
+                        }
+                      },
+                      isDarkMode: isDarkMode,
+                      isSwitched: isSwitched,
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
-          // Use the InputField widget
-          InputField(
-            controller: textController,
-            onSendPressed: () {
-              if (textController.text.isNotEmpty) {
-                sendMessage(textController.text, true);
-              }
-            },
-            isDarkMode: isDarkMode,
-            isSwitched: isSwitched,
           ),
         ],
       ),
