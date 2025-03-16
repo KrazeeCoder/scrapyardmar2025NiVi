@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'messageWidget.dart';
 import 'controlHeader.dart'; // Import the ControlHeader
+import 'inputField.dart'; // Import the InputField
 
 class FakeChatScreen extends StatefulWidget {
   final String parentName;
@@ -24,10 +25,13 @@ class FakeChatScreen extends StatefulWidget {
 class _FakeChatScreenState extends State<FakeChatScreen> {
   final ScreenshotController screenshotController = ScreenshotController();
   final TextEditingController textController = TextEditingController();
-  List<Map<String, String>> messages = [];
+  List<Map<String, dynamic>> messages = []; // Add a field to track switched mode
 
   // Track whether the app is in dark mode
   bool isDarkMode = true;
+
+  // Track whether the input field is in switched mode
+  bool isSwitched = false;
 
   // Function to toggle between light and dark mode
   void toggleTheme() {
@@ -36,9 +40,20 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
     });
   }
 
+  // Function to toggle switched mode
+  void toggleSwitchedMode() {
+    setState(() {
+      isSwitched = !isSwitched;
+    });
+  }
+
   void sendMessage(String text, bool isUser) {
     setState(() {
-      messages.add({"text": text, "sender": isUser ? "user" : "parent"});
+      messages.add({
+        "text": text,
+        "sender": isUser ? "user" : "parent",
+        "isSwitched": isSwitched, // Track whether the message was sent in switched mode
+      });
     });
     textController.clear();
   }
@@ -59,7 +74,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
     // Define light and dark mode colors
     final backgroundColor = isDarkMode ? Colors.black : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black;
-    final chatBubbleColorUser = isDarkMode ? Colors.blue : Colors.blue[200];
+    final chatBubbleColorUser = isDarkMode ? Colors.blue : Colors.blue[400];
     final chatBubbleColorParent = isDarkMode ? Colors.grey[800] : Colors.grey[300];
 
     return Scaffold(
@@ -70,6 +85,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
           ControlHeader(
             onScreenshotPressed: takeScreenshot,
             onThemePressed: toggleTheme, // Pass the theme toggle function
+            onSwitchPressed: toggleSwitchedMode, // Pass the switch mode function
             isDarkMode: isDarkMode, // Pass the current theme mode
           ),
           // Add the profile picture and "Mom" text here
@@ -102,10 +118,16 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                   itemBuilder: (context, index) {
                     final msg = messages[messages.length - index - 1];
                     final isUser = msg["sender"] == "user";
+                    final isSwitchedMessage = msg["isSwitched"];
+
                     return MessageWidget(
-                      text: msg["text"]!,
-                      isUser: isUser,
-                      bubbleColor: isUser ? chatBubbleColorUser : chatBubbleColorParent,
+                      text: msg["text"],
+                      isUser: isSwitchedMessage ? !isUser : isUser, // Flip alignment if in switched mode
+                      bubbleColor: isSwitchedMessage
+                          ? chatBubbleColorParent
+                          : isUser
+                          ? chatBubbleColorUser
+                          : chatBubbleColorParent,
                       textColor: textColor,
                     );
                   },
@@ -113,40 +135,16 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            color: backgroundColor,
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: textController,
-                    style: TextStyle(color: textColor),
-                    decoration: InputDecoration(
-                      hintText: "Type a message...",
-                      hintStyle: TextStyle(color: Colors.grey[500]),
-                      filled: true,
-                      fillColor: isDarkMode ? Colors.grey[900] : Colors.grey[200],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                FloatingActionButton(
-                  onPressed: () {
-                    if (textController.text.isNotEmpty) {
-                      sendMessage(textController.text, true);
-                    }
-                  },
-                  backgroundColor: Colors.blue,
-                  child: const Icon(Icons.send, color: Colors.white),
-                ),
-              ],
-            ),
+          // Use the InputField widget
+          InputField(
+            controller: textController,
+            onSendPressed: () {
+              if (textController.text.isNotEmpty) {
+                sendMessage(textController.text, true);
+              }
+            },
+            isDarkMode: isDarkMode,
+            isSwitched: isSwitched,
           ),
         ],
       ),

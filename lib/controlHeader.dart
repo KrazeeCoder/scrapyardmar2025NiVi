@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class ControlHeader extends StatelessWidget {
   final VoidCallback onScreenshotPressed;
   final VoidCallback onThemePressed;
+  final VoidCallback onSwitchPressed;
   final bool isDarkMode;
 
   const ControlHeader({
     super.key,
     required this.onScreenshotPressed,
     required this.onThemePressed,
+    required this.onSwitchPressed,
     required this.isDarkMode,
   });
 
@@ -21,11 +23,10 @@ class ControlHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+          // Switcher icon
           IconButton(
             icon: const Icon(Icons.switch_left, color: Colors.blue),
-            onPressed: () {
-              // Placeholder for switch functionality
-            },
+            onPressed: onSwitchPressed,
           ),
           IconButton(
             icon: const Icon(Icons.auto_awesome, color: Colors.blue),
@@ -33,7 +34,7 @@ class ControlHeader extends StatelessWidget {
               // Placeholder for AI functionality
             },
           ),
-          // Single IconButton for light/dark mode
+          // Light/dark mode toggle
           IconButton(
             icon: Icon(
               isDarkMode ? Icons.light_mode : Icons.dark_mode,
@@ -41,6 +42,7 @@ class ControlHeader extends StatelessWidget {
             ),
             onPressed: onThemePressed,
           ),
+          // Screenshot button
           IconButton(
             icon: const Icon(Icons.camera_alt, color: Colors.blue),
             onPressed: onScreenshotPressed,
