@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'messageWidget.dart'; // Import the updated MessageWidget
+import 'messageWidget.dart';
 import 'controlHeader.dart'; // Import the ControlHeader
 import 'inputField.dart'; // Import the InputField
 
@@ -25,7 +25,7 @@ class FakeChatScreen extends StatefulWidget {
 class _FakeChatScreenState extends State<FakeChatScreen> {
   final ScreenshotController screenshotController = ScreenshotController();
   final TextEditingController textController = TextEditingController();
-  List<Map<String, dynamic>> messages = [];
+  List<Map<String, dynamic>> messages = []; // Add a field to track switched mode
 
   // Track whether the app is in dark mode
   bool isDarkMode = true;
@@ -119,12 +119,10 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                     final msg = messages[messages.length - index - 1];
                     final isUser = msg["sender"] == "user";
                     final isSwitchedMessage = msg["isSwitched"];
-                    final isLastMessage = index == 0; // Check if it's the last message
 
                     return MessageWidget(
                       text: msg["text"],
                       isUser: isSwitchedMessage ? !isUser : isUser, // Flip alignment if in switched mode
-                      isLastMessage: isLastMessage, // Pass whether it's the last message
                       bubbleColor: isSwitchedMessage
                           ? chatBubbleColorParent
                           : isUser
@@ -147,7 +145,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
             },
             isDarkMode: isDarkMode,
             isSwitched: isSwitched,
-          )
+          ),
         ],
       ),
     );
