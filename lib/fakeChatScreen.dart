@@ -26,6 +26,16 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
   final TextEditingController textController = TextEditingController();
   List<Map<String, String>> messages = [];
 
+  // Track whether the app is in dark mode
+  bool isDarkMode = true;
+
+  // Function to toggle between light and dark mode
+  void toggleTheme() {
+    setState(() {
+      isDarkMode = !isDarkMode;
+    });
+  }
+
   void sendMessage(String text, bool isUser) {
     setState(() {
       messages.add({"text": text, "sender": isUser ? "user" : "parent"});
@@ -46,17 +56,25 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Define light and dark mode colors
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final chatBubbleColorUser = isDarkMode ? Colors.blue : Colors.blue[200];
+    final chatBubbleColorParent = isDarkMode ? Colors.grey[800] : Colors.grey[300];
+
     return Scaffold(
-      backgroundColor: Colors.black, // iMessage background
+      backgroundColor: backgroundColor, // Set background color based on theme
       body: Column(
         children: [
           // ControlHeader at the absolute top
           ControlHeader(
-            onScreenshotPressed: takeScreenshot, // Pass the method directly
+            onScreenshotPressed: takeScreenshot,
+            onThemePressed: toggleTheme, // Pass the theme toggle function
+            isDarkMode: isDarkMode, // Pass the current theme mode
           ),
           // Add the profile picture and "Mom" text here
           Container(
-            color: Colors.black,
+            color: backgroundColor,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             child: Row(
               children: [
@@ -67,7 +85,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                 const SizedBox(width: 10),
                 Text(
                   widget.parentName,
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: textColor, fontSize: 18),
                 ),
               ],
             ),
@@ -76,7 +94,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
             child: Screenshot(
               controller: screenshotController,
               child: Container(
-                color: Colors.black,
+                color: backgroundColor,
                 padding: const EdgeInsets.all(10),
                 child: ListView.builder(
                   reverse: true,
@@ -87,6 +105,8 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                     return MessageWidget(
                       text: msg["text"]!,
                       isUser: isUser,
+                      bubbleColor: isUser ? chatBubbleColorUser : chatBubbleColorParent,
+                      textColor: textColor,
                     );
                   },
                 ),
@@ -95,18 +115,18 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
           ),
           Container(
             padding: const EdgeInsets.all(10),
-            color: Colors.black,
+            color: backgroundColor,
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: textController,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: textColor),
                     decoration: InputDecoration(
                       hintText: "Type a message...",
                       hintStyle: TextStyle(color: Colors.grey[500]),
                       filled: true,
-                      fillColor: Colors.grey[900],
+                      fillColor: isDarkMode ? Colors.grey[900] : Colors.grey[200],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
                         borderSide: BorderSide.none,

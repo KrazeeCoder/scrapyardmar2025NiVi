@@ -1,14 +1,17 @@
-// messageWidget.dart
 import 'package:flutter/material.dart';
 
 class MessageWidget extends StatelessWidget {
   final String text;
   final bool isUser;
+  final Color? bubbleColor;
+  final Color? textColor;
 
   const MessageWidget({
     super.key,
     required this.text,
     required this.isUser,
+    this.bubbleColor,
+    this.textColor,
   });
 
   @override
@@ -19,12 +22,12 @@ class MessageWidget extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         decoration: BoxDecoration(
-          color: isUser ? Colors.blue : Colors.grey[800],
+          color: bubbleColor,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: textColor, fontSize: 16),
         ),
       ),
     );
