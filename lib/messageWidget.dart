@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class MessageWidget extends StatelessWidget {
+class MessageWidget extends StatefulWidget {
   final String text;
   final bool isUser;
   final bool isLastMessage;
@@ -18,6 +18,19 @@ class MessageWidget extends StatelessWidget {
   });
 
   @override
+  State<MessageWidget> createState() => _MessageWidgetState();
+}
+
+class _MessageWidgetState extends State<MessageWidget> {
+  late bool isLastMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    isLastMessage = widget.isLastMessage; // Initialize with the passed value
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoTheme(
       data: CupertinoThemeData(
@@ -26,38 +39,39 @@ class MessageWidget extends StatelessWidget {
           textStyle: TextStyle(
             fontFamily: '.SF UI Text', // Cupertino/iMessage-like font
             fontSize: 16,
-            color: isUser ? CupertinoColors.white : CupertinoColors.label,
+            color: widget.isUser ? CupertinoColors.white : CupertinoColors.label,
           ),
         ),
       ),
       child: Align(
-        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: widget.isUser ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           decoration: BoxDecoration(
-            color: bubbleColor ??
-                (isUser
+            color: widget.bubbleColor ??
+                (widget.isUser
                     ? CupertinoColors.systemBlue
                     : CupertinoColors.systemGrey6),
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(18),
               topRight: const Radius.circular(18),
-              bottomLeft: isUser || !isLastMessage
+              bottomLeft: widget.isUser || !isLastMessage
                   ? const Radius.circular(18)
                   : const Radius.circular(4),
-              bottomRight: !isUser || !isLastMessage
+              bottomRight: !widget.isUser || !isLastMessage
                   ? const Radius.circular(18)
                   : const Radius.circular(4),
             ),
           ),
           child: Stack(
+            clipBehavior: Clip.none, // Allow the tail to overflow
             children: [
               Text(
-                text,
+                widget.text,
                 style: TextStyle(
-                  color: textColor ??
-                      (isUser
+                  color: widget.textColor ??
+                      (widget.isUser
                           ? CupertinoColors.white
                           : CupertinoColors.label),
                   fontSize: 16,
@@ -65,17 +79,17 @@ class MessageWidget extends StatelessWidget {
               ),
               if (isLastMessage)
                 Positioned(
-                  bottom: 0,
-                  right: isUser ? -10 : null,
-                  left: isUser ? null : -10,
+                  bottom: -4, // Adjust this value to align the tail properly
+                  right: widget.isUser ? -12 : null, // Adjust this value for user messages
+                  left: widget.isUser ? null : -10, // Adjust this value for non-user messages
                   child: CustomPaint(
                     size: const Size(12, 12),
                     painter: _MessageTailPainter(
-                      color: bubbleColor ??
-                          (isUser
+                      color: widget.bubbleColor ??
+                          (widget.isUser
                               ? CupertinoColors.systemBlue
                               : CupertinoColors.systemGrey6),
-                      isUser: isUser,
+                      isUser: widget.isUser,
                     ),
                   ),
                 ),
@@ -99,13 +113,15 @@ class _MessageTailPainter extends CustomPainter {
     final Path path = Path();
 
     if (isUser) {
-      path.moveTo(size.width, 0);
-      path.lineTo(size.width, size.height);
-      path.lineTo(0, size.height);
-    } else {
+      // Draw tail for user messages (right side)
       path.moveTo(0, 0);
-      path.lineTo(size.width, 0);
-      path.lineTo(size.width, size.height);
+      path.quadraticBezierTo(size.width * 0.6, size.height * 0.2, size.width, size.height * 0.5);
+      path.quadraticBezierTo(size.width * 0.6, size.height * 0.8, 0, size.height);
+    } else {
+      // Draw tail for non-user messages (left side)
+      path.moveTo(size.width, 0);
+      path.quadraticBezierTo(size.width * 0.4, size.height * 0.2, 0, size.height * 0.5);
+      path.quadraticBezierTo(size.width * 0.4, size.height * 0.8, size.width, size.height);
     }
 
     canvas.drawPath(path, paint);

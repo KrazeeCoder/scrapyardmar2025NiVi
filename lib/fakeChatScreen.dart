@@ -50,23 +50,57 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
 
   void sendMessage(String text, bool isUser) {
     setState(() {
+      for (int x = 0; x < messages.length; x++) {
+        Map<String, dynamic> temp = messages[x];
+        temp['lastMsg'] = false;
+        messages[x] = temp;
+      }
       messages.add({
         "text": text,
         "sender": isUser ? "user" : "parent",
         "isSwitched": isSwitched, // Track whether the message was sent in switched mode
+        "lastMsg": true,
       });
     });
     textController.clear();
   }
 
   Future<void> takeScreenshot() async {
-    final Uint8List? image = await screenshotController.capture();
-    if (image != null) {
-      final directory = await getApplicationDocumentsDirectory();
-      final imagePath = '${directory.path}/fake_chat.png';
+    try {
+      // Capture the screenshot
+      final Uint8List? image = await screenshotController.capture();
+      if (image == null) {
+        throw Exception("Failed to capture screenshot.");
+      }
+
+      // Get the Downloads directory
+      final directory = await getDownloadsDirectory();
+      if (directory == null) {
+        throw Exception("Could not access the Downloads directory.");
+      }
+
+      // Define the file path
+      final imagePath = '${directory.path}/fake_chat_${DateTime.now().millisecondsSinceEpoch}.png';
       final File imageFile = File(imagePath);
+
+      // Save the screenshot to the Downloads folder
       await imageFile.writeAsBytes(image);
-      Share.shareXFiles([XFile(imagePath)], text: "Fake iMessage Screenshot");
+
+      // Show a confirmation message to the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Screenshot saved to Downloads!"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to save screenshot: $e"),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -99,7 +133,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                   children: [
                     // Header with back button, profile picture, and FaceTime button
                     Container(
-                      color: backgroundColor,
+                      color: Color(0xCC1C1C1C),
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                       child: Row(
                         children: [
@@ -133,7 +167,7 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
                           const Spacer(), // Add space between profile picture and FaceTime button
                           // FaceTime button
                           IconButton(
-                            icon: const Icon(Icons.videocam, color: Colors.blue), // FaceTime icon
+                            icon: const Icon(Icons.videocam_outlined, color: Colors.blue, weight: 1), // FaceTime icon
                             onPressed: () {
                               // Handle FaceTime button press
                             },
@@ -158,34 +192,35 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
 
                               return MessageWidget(
                                 text: msg["text"],
-                                isUser: isSwitchedMessage ? !isUser : isUser, // Flip alignment if in switched mode
+                                isUser: isSwitchedMessage ? !isUser : isUser,
                                 bubbleColor: isSwitchedMessage
                                     ? chatBubbleColorParent
                                     : isUser
                                     ? chatBubbleColorUser
                                     : chatBubbleColorParent,
                                 textColor: textColor,
+                                isLastMessage: msg['lastMsg'],
                               );
                             },
                           ),
                         ),
                       ),
                     ),
-                    // Use the InputField widget
-                    InputField(
-                      controller: textController,
-                      onSendPressed: () {
-                        if (textController.text.isNotEmpty) {
-                          sendMessage(textController.text, true);
-                        }
-                      },
-                      isDarkMode: isDarkMode,
-                      isSwitched: isSwitched,
-                    ),
                   ],
                 ),
               ),
             ),
+          ),
+          // Use the InputField widget
+          InputField(
+            controller: textController,
+            onSendPressed: () {
+              if (textController.text.isNotEmpty) {
+                sendMessage(textController.text, true);
+              }
+            },
+            isDarkMode: isDarkMode,
+            isSwitched: isSwitched,
           ),
         ],
       ),
