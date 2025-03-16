@@ -1,4 +1,3 @@
-// input_field.dart
 import 'package:flutter/material.dart';
 
 class InputField extends StatelessWidget {
@@ -21,59 +20,57 @@ class InputField extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       color: isDarkMode ? Colors.grey[900] : Colors.grey[200],
       child: Row(
-        children: isSwitched
-            ? [
-          // Send button on the left
-          FloatingActionButton(
-            onPressed: onSendPressed,
-            backgroundColor: Colors.blue,
-            child: const Icon(Icons.send, color: Colors.white),
-          ),
-          const SizedBox(width: 10),
-          // Text field on the right
-          Expanded(
-            child: TextField(
-              controller: controller,
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-              decoration: InputDecoration(
-                hintText: "Type a message...",
-                hintStyle: TextStyle(color: Colors.grey[500]),
-                filled: true,
-                fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[300],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-              ),
-            ),
-          ),
-        ]
-            : [
-          // Text field on the left
-          Expanded(
-            child: TextField(
-              controller: controller,
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-              decoration: InputDecoration(
-                hintText: "Type a message...",
-                hintStyle: TextStyle(color: Colors.grey[500]),
-                filled: true,
-                fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[300],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-              ),
+        children: [
+          // Plus icon on the left
+          IconButton(
+            onPressed: () {
+              // Add functionality for the plus icon (e.g., show attachment options)
+            },
+            icon: Icon(
+              Icons.add_circle,
+              color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+              size: 40,
             ),
           ),
           const SizedBox(width: 10),
-          // Send button on the right
-          FloatingActionButton(
-            onPressed: onSendPressed,
-            backgroundColor: Colors.blue,
-            child: const Icon(Icons.send, color: Colors.white),
+          // Expanded text field
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      style: TextStyle(
+                        color: isDarkMode ? Colors.white : Colors.black,
+                        fontSize: 16,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: "Type a message...",
+                        hintStyle: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 16,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  // Send button (custom icon from assets)
+                  IconButton(
+                    onPressed: onSendPressed,
+                    icon: CircleAvatar(
+                      backgroundImage: AssetImage('assets/sentMessage.png'),
+                      radius: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
