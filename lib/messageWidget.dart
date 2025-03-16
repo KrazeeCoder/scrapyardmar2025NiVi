@@ -1,4 +1,4 @@
-// message_widget.dart
+// messageWidget.dart
 import 'package:flutter/material.dart';
 
 class MessageWidget extends StatelessWidget {

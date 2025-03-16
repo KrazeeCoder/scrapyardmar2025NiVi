@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'message_widget.dart';
+import 'messageWidget.dart';
+import 'controlHeader.dart'; // Import the ControlHeader
 
 class FakeChatScreen extends StatefulWidget {
   final String parentName;
@@ -47,30 +48,30 @@ class _FakeChatScreenState extends State<FakeChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black, // iMessage background
-      appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: AssetImage(widget.parentPhoto),
-              radius: 15,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              widget.parentName,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.black,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.camera),
-            onPressed: takeScreenshot,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          // ControlHeader at the absolute top
+          ControlHeader(
+            onScreenshotPressed: takeScreenshot, // Pass the method directly
+          ),
+          // Add the profile picture and "Mom" text here
+          Container(
+            color: Colors.black,
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: AssetImage(widget.parentPhoto),
+                  radius: 15,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  widget.parentName,
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: Screenshot(
               controller: screenshotController,
