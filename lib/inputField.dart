@@ -34,17 +34,7 @@ class InputField extends StatelessWidget {
         child: Row(
           children: isSwitched
               ? [
-            // Send button on the left
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: onSendPressed,
-              child: CircleAvatar(
-                backgroundImage: AssetImage('assets/sentMessage.png'),
-                radius: 15,
-              ),
-            ),
-            const SizedBox(width: 10),
-            // Expanded text field
+            // Expanded text field with mic/send button inside the border on the left
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -53,7 +43,29 @@ class InputField extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const SizedBox(width: 15),
+                    // Mic/send button inside the text field border (left side)
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: controller,
+                      builder: (context, value, child) {
+                        return CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: value.text.isNotEmpty ? onSendPressed : null,
+                          child: Icon(
+                            value.text.isNotEmpty
+                                ? CupertinoIcons.arrow_up_circle_fill // iMessage-style send icon
+                                : CupertinoIcons.mic_fill, // Mic icon when text is empty
+                            color: value.text.isNotEmpty
+                                ? CupertinoColors.systemBlue // Blue color for send icon
+                                : isDarkMode
+                                ? CupertinoColors.systemGrey
+                                : CupertinoColors.systemGrey2,
+                            size: 24, // Smaller icon size
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 8), // Add spacing between button and text field edge
+                    // Expanded text field
                     Expanded(
                       child: CupertinoTextField(
                         controller: controller,
@@ -80,34 +92,35 @@ class InputField extends StatelessWidget {
                 ),
               ),
             ),
-            // Plus icon on the right
+            const SizedBox(width: 10),
+            // Plus icon on the right (outside the text field border)
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: () {
                 // Add functionality for the plus icon (e.g., show attachment options)
               },
               child: Icon(
-                CupertinoIcons.add_circled,
+                CupertinoIcons.add_circled_solid, // Solid Cupertino icon
                 color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey2,
-                size: 40,
+                size: 28, // Smaller icon size
               ),
             ),
           ]
               : [
-            // Plus icon on the left
+            // Plus icon on the left (outside the text field border)
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: () {
                 // Add functionality for the plus icon (e.g., show attachment options)
               },
               child: Icon(
-                CupertinoIcons.add_circled,
+                CupertinoIcons.add_circled_solid, // Solid Cupertino icon
                 color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey2,
-                size: 40,
+                size: 28, // Smaller icon size
               ),
             ),
             const SizedBox(width: 10),
-            // Expanded text field
+            // Expanded text field with mic/send button inside the border on the right
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -139,15 +152,28 @@ class InputField extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Send button (custom icon from assets)
-                    CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: onSendPressed,
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage('assets/sentMessage.png'),
-                        radius: 15,
-                      ),
+                    // Mic/send button inside the text field border (right side)
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: controller,
+                      builder: (context, value, child) {
+                        return CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: value.text.isNotEmpty ? onSendPressed : null,
+                          child: Icon(
+                            value.text.isNotEmpty
+                                ? CupertinoIcons.arrow_up_circle_fill // iMessage-style send icon
+                                : CupertinoIcons.mic_fill, // Mic icon when text is empty
+                            color: value.text.isNotEmpty
+                                ? CupertinoColors.systemBlue // Blue color for send icon
+                                : isDarkMode
+                                ? CupertinoColors.systemGrey
+                                : CupertinoColors.systemGrey2,
+                            size: 24, // Smaller icon size
+                          ),
+                        );
+                      },
                     ),
+                    const SizedBox(width: 8), // Add spacing between button and text field edge
                   ],
                 ),
               ),
