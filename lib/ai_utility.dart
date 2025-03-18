@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
-final String apiKey = "AIzaSyBOxc583Ud9DaId24LD_SHF_jz3Ujl1hog";
+final String apiKey = "[insert api key here]";
 
 
 final safetySettings = [
